@@ -11,6 +11,8 @@ Tweet spotify's top hits each day.
 Each of the above scripts can be run independently of each other, but all of them read the config/credentials
 from `config.py`.
 
+![diagram](./docs/diagram.jpg)
+
 # Get started
 
 1. Install necessary dependencies
