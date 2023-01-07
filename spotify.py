@@ -46,7 +46,7 @@ def main():
     today_hits.sort(key=lambda item: int(item['popularity']), reverse=True)  # sort by popularity
 
     for index, hit in enumerate(today_hits):
-        store.store(index, hit)
+        store.store(index + 1, hit)
     else:
         store.close()
 
