@@ -9,6 +9,8 @@ import tweepy
 
 from config import config
 
+logging.basicConfig(level=logging.INFO)
+
 
 def bold(input_text):
     chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
@@ -25,10 +27,12 @@ class Tweeter:
     def __init__(self, consumer_key, consumer_secret, access_key, access_secret):
         auth = tweepy.OAuth1UserHandler(consumer_key, consumer_secret, access_key, access_secret)
         self.api = tweepy.API(auth)
+        logging.info("Twitter client initialized")
 
     def tweet(self, content: str):
         try:
-            self.api.update_status(content.strip())
+            result = self.api.update_status(content.strip())
+            logging.info(f"Tweeted, id = {result.id}")
         except Exception as e:
             logging.error("Failed to tweet, reason: ", e)
 
@@ -36,12 +40,14 @@ class Tweeter:
 class Store:
     def __init__(self, host='localhost', port=6379):
         self.__redis = redis.Redis(host=host, port=int(port), db=0)
+        logging.info("Redis connection initialized")
 
     def fetch_hit(self, rank: int) -> Dict:
         return self.__redis.hgetall(f"hit:{rank}")
 
     def close(self):
         self.__redis.close()
+        logging.info("Redis connection closed")
 
 
 def main():
@@ -57,6 +63,8 @@ def main():
         tweet += "\n\n"
         tweet += f"listen right now {hit[b'url'].decode()}"
         tweeter.tweet(tweet)
+    else:
+        logging.warning("No hit track found")
 
     store.close()
 

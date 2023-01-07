@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import logging
 from typing import List, Dict
 
 import redis
@@ -8,6 +9,8 @@ from spotipy.oauth2 import SpotifyClientCredentials
 
 from config import config
 
+logging.basicConfig(level=logging.INFO)
+
 
 class Spotify:
     playlist_id = '37i9dQZF1DXcBWIGoYBM5M'  # Today's top hit playlist id
@@ -15,15 +18,18 @@ class Spotify:
     def __init__(self, client_id, client_secret):
         self.api = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id=client_id,
                                                                          client_secret=client_secret))
+        logging.info("Spotify client initialized")
 
     def fetch_today_top_hits(self) -> List[Dict]:
         data = self.api.playlist(playlist_id=self.playlist_id)
+        logging.info(f"Total fetched spotify hits {len(data['tracks']['items'])}")
         return list(map(lambda item: item['track'], data['tracks']['items']))
 
 
 class Store:
     def __init__(self, host='localhost', port=6379):
         self.__redis = redis.Redis(host=host, port=int(port), db=0)
+        logging.info("Redis connection initialized")
 
     def store(self, rank: int, track: dict):
         identifier = f"hit:{rank}"
@@ -35,6 +41,7 @@ class Store:
 
     def close(self):
         self.__redis.close()
+        logging.info("Redis connection closed")
 
 
 def main():
