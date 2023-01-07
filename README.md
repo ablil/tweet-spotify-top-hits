@@ -22,7 +22,7 @@ pip3 install -r requirements.txt
 2. Create a redis store to hold the data
 
 ```shell
-$ docker pull redis && docker run -d -n mystore -p 6379:6379 redis
+$ docker pull redis && docker run -d --name mystore -p 6379:6379 redis
 ```
 
 3. Set a cronjob to fetch spotify hits daily
